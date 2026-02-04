@@ -133,7 +133,7 @@ export default class Symbols {
         break
       }
     }
-    return functionPath.join('⟩')
+    return functionPath.join('›')
   }
 
   public async getCurrentFunctionSymbol(): Promise<string> {
