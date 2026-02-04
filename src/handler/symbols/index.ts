@@ -126,14 +126,14 @@ export default class Symbols {
     for (let sym of symbols.filter(s => s.kind === 'Function')) {
       if (sym.range
         && positionInRange(position, sym.range) == 0) {
-        let functionName = sym.text
+        let functionName = sym.text.replace(/\) callback$/, ') cb')
         let label = labels[sym.kind.toLowerCase()]
         if (label) functionName = `(${label} ${functionName})`
         functionPath.push(functionName)
         break
       }
     }
-    return functionPath.join('⟫')
+    return functionPath.join('⟩')
   }
 
   public async getCurrentFunctionSymbol(): Promise<string> {
