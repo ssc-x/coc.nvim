@@ -123,10 +123,9 @@ export default class Symbols {
         break
       }
     }
-    for (let sym of symbols.filter(s => s.kind === 'Variable')) {
+    for (let sym of symbols.filter(s => s.kind === 'Function')) {
       if (sym.range
-        && positionInRange(position, sym.range) == 0
-        && sym.text.endsWith(') callback')) {
+        && positionInRange(position, sym.range) == 0) {
         let functionName = sym.text
         let label = labels[sym.kind.toLowerCase()]
         if (label) functionName = `(${label} ${functionName})`
