@@ -100,25 +100,28 @@ export default class Symbols {
   public async getFunctionSymbol(bufnr: number, position: Position): Promise<string> {
     let symbols = await this.getDocumentSymbols(bufnr)
     if (!symbols || symbols.length === 0) return ''
-    symbols = symbols.filter(s => [
-      'Class',
-      'Method',
-      'Function',
-      'Struct',
-    ].includes(s.kind))
-    let functionName = ''
+    let functionPath: string[] = []
     let labels = this.labels
-    for (let sym of symbols.reverse()) {
+    symbols = symbols.reverse()
+    for (let sym of symbols.filter(s => s.kind === 'Class')) {
       if (sym.range
-        && positionInRange(position, sym.range) == 0
-        && !sym.text.endsWith(') callback')) {
-        functionName = sym.text
-        let label = labels[sym.kind.toLowerCase()]
-        if (label) functionName = `${label} ${functionName}`
+        && positionInRange(position, sym.range) == 0) {
+        functionPath.push(sym.text)
         break
       }
     }
-    return functionName
+    for (let sym of symbols) {
+      if (sym.range
+        && positionInRange(position, sym.range) == 0
+        && !sym.text.endsWith(') callback')) {
+        let functionName = sym.text
+        let label = labels[sym.kind.toLowerCase()]
+        if (label) functionName = `${label} ${functionName}`
+        functionPath.push(sym.text)
+        break
+      }
+    }
+    return functionPath.join('::')
   }
 
   public async getCurrentFunctionSymbol(): Promise<string> {
