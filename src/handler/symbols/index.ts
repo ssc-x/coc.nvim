@@ -106,22 +106,35 @@ export default class Symbols {
     for (let sym of symbols.filter(s => s.kind === 'Class')) {
       if (sym.range
         && positionInRange(position, sym.range) == 0) {
-        functionPath.push(sym.text)
+        let className = sym.text
+        let label = labels[sym.kind.toLowerCase()]
+        if (label) className = `(${label} ${className})`
+        functionPath.push(className)
         break
       }
     }
-    for (let sym of symbols) {
+    for (let sym of symbols.filter(s => s.kind === 'Property')) {
+      if (sym.range
+        && positionInRange(position, sym.range) == 0) {
+        let propertyName = sym.text
+        let label = labels[sym.kind.toLowerCase()]
+        if (label) propertyName = `(${label} ${propertyName})`
+        functionPath.push(propertyName)
+        break
+      }
+    }
+    for (let sym of symbols.filter(s => s.kind === 'Variable')) {
       if (sym.range
         && positionInRange(position, sym.range) == 0
-        && !sym.text.endsWith(') callback')) {
+        && sym.text.endsWith(') callback')) {
         let functionName = sym.text
         let label = labels[sym.kind.toLowerCase()]
-        if (label) functionName = `${label} ${functionName}`
-        functionPath.push(sym.text)
+        if (label) functionName = `(${label} ${functionName})`
+        functionPath.push(functionName)
         break
       }
     }
-    return functionPath.join('::')
+    return functionPath.join('@')
   }
 
   public async getCurrentFunctionSymbol(): Promise<string> {
