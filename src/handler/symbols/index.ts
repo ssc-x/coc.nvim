@@ -117,7 +117,7 @@ export default class Symbols {
             break
           }
           let part = sym.text.replace(/\) callback$/, ')')
-          if (sym.kind === 'Function' && !part.endsWith(')')) {
+          if (['Function', 'Method'].includes(sym.kind) && !part.endsWith(')')) {
             part += '()'
           }
           let label = labels[sym.kind.toLowerCase()]
