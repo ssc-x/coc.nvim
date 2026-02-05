@@ -112,7 +112,14 @@ export default class Symbols {
       for (let sym of symbols.filter(s => group.includes(s.kind))) {
         if (sym.range
           && positionInRange(position, sym.range) == 0) {
-          let part = sym.text.replace(/\) callback$/, ') cb')
+          if (sym.kind === 'Constructor') {
+            functionPath.push('constructor()')
+            break
+          }
+          let part = sym.text.replace(/\) callback$/, ')')
+          if (sym.kind === 'Function' && !part.endsWith(')')) {
+            part += '()'
+          }
           let label = labels[sym.kind.toLowerCase()]
           if (label) part = `(${label} ${part})`
           functionPath.push(part)
